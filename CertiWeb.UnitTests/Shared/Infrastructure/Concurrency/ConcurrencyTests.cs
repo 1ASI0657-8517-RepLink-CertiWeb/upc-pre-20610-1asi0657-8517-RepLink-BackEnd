@@ -1,6 +1,6 @@
-using CertiWeb.API.Certifications.Domain.Model.Aggregates;
-using CertiWeb.API.Certifications.Domain.Model.ValueObjects;
-using CertiWeb.API.Certifications.Domain.Repositories;
+using CertiWeb.API.Vehicles.Domain.Model.Aggregates;
+using CertiWeb.API.Vehicles.Domain.Model.ValueObjects;
+using CertiWeb.API.Vehicles.Domain.Repositories;
 using Moq;
 using NUnit.Framework;
 using System.Threading.Tasks;
@@ -487,7 +487,7 @@ public class ConcurrencyTests
 
     private static Car CreateTestCar(int id)
     {
-        var cmd = new CertiWeb.API.Certifications.Domain.Model.Commands.CreateCarCommand(
+        var cmd = new CertiWeb.API.Vehicles.Domain.Model.Commands.CreateCarCommand(
             Title: $"Test Title {id}",
             Owner: "Test Owner",
             OwnerEmail: "owner@example.com",

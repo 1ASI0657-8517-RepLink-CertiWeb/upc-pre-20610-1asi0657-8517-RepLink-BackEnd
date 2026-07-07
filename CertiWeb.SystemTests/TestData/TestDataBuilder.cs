@@ -1,5 +1,5 @@
 using Bogus;
-using CertiWeb.API.Certifications.Domain.Model.Commands;
+using CertiWeb.API.Vehicles.Domain.Model.Commands;
 using CertiWeb.API.Users.Domain.Model.Commands;
 
 namespace CertiWeb.SystemTests.TestData;

@@ -32,15 +32,13 @@ services:
     ports:
       - "3000:8080"
     depends_on:
-      - postgres
-      - rabbitmq
-    environment:
-      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;User Id=postgres;Password=postgres;Database=certiweb
-      - RabbitMQ__Host=rabbitmq
       mysql:
         condition: service_healthy
+      rabbitmq:
+        condition: service_started
     environment:
       - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=certiweb;Uid=certiweb_user;Pwd=certiweb_password;
+      - RabbitMQ__Host=rabbitmq
     networks:
       - certiweb-network
 
@@ -49,15 +47,13 @@ services:
     ports:
       - "3001:8080"
     depends_on:
-      - postgres
-      - rabbitmq
-    environment:
-      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;User Id=postgres;Password=postgres;Database=certiweb
-      - RabbitMQ__Host=rabbitmq
       mysql:
         condition: service_healthy
+      rabbitmq:
+        condition: service_started
     environment:
       - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=certiweb;Uid=certiweb_user;Pwd=certiweb_password;
+      - RabbitMQ__Host=rabbitmq
     networks:
       - certiweb-network
 

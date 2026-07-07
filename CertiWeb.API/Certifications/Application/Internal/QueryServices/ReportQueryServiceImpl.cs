@@ -1,6 +1,6 @@
-﻿using CertiWeb.API.Certifications.Domain.Model.Aggregates;
-using CertiWeb.API.Certifications.Domain.Model.Queries;
-using CertiWeb.API.Certifications.Domain.Repositories;
+﻿using CertiWeb.API.Vehicles.Domain.Model.Aggregates;
+using CertiWeb.API.Vehicles.Domain.Model.Queries;
+using CertiWeb.API.Vehicles.Domain.Repositories;
 using CertiWeb.API.Certifications.Domain.Services;
 using CertiWeb.API.Shared.Infrastructure.Storage;
 namespace CertiWeb.API.Certifications.Application.Internal.QueryServices;

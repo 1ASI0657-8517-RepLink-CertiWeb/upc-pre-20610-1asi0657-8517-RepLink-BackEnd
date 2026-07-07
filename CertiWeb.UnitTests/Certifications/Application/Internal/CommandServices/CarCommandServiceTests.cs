@@ -1,8 +1,8 @@
-using CertiWeb.API.Certifications.Application.Internal.CommandServices;
-using CertiWeb.API.Certifications.Domain.Model.Aggregates;
-using CertiWeb.API.Certifications.Domain.Model.Commands;
-using CertiWeb.API.Certifications.Domain.Model.ValueObjects;
-using CertiWeb.API.Certifications.Domain.Repositories;
+using CertiWeb.API.Vehicles.Application.Internal.CommandServices;
+using CertiWeb.API.Vehicles.Domain.Model.Aggregates;
+using CertiWeb.API.Vehicles.Domain.Model.Commands;
+using CertiWeb.API.Vehicles.Domain.Model.ValueObjects;
+using CertiWeb.API.Vehicles.Domain.Repositories;
 using CertiWeb.API.Shared.Domain.Repositories;
 using Moq;
 using NUnit.Framework;
@@ -378,7 +378,7 @@ public class CarCommandServiceTests
 
     private static Car CreateTestCar(int id, string model = "Test Model")
     {
-        var cmd = new CertiWeb.API.Certifications.Domain.Model.Commands.CreateCarCommand(
+        var cmd = new CertiWeb.API.Vehicles.Domain.Model.Commands.CreateCarCommand(
             Title: $"Test Title {id}",
             Owner: "Test Owner",
             OwnerEmail: "owner@example.com",

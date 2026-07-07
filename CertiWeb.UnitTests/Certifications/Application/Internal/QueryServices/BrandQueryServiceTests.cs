@@ -1,6 +1,6 @@
-using CertiWeb.API.Certifications.Application.Internal.QueryServices;
-using CertiWeb.API.Certifications.Domain.Model.Aggregates;
-using CertiWeb.API.Certifications.Domain.Repositories;
+using CertiWeb.API.Vehicles.Application.Internal.QueryServices;
+using CertiWeb.API.Vehicles.Domain.Model.Aggregates;
+using CertiWeb.API.Vehicles.Domain.Repositories;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;

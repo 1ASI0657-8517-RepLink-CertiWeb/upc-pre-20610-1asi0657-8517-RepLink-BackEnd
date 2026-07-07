@@ -1,6 +1,6 @@
 using CertiWeb.SystemTests.Infrastructure;
 using CertiWeb.SystemTests.TestData;
-using CertiWeb.API.Certifications.Domain.Model.Aggregates;
+using CertiWeb.API.Vehicles.Domain.Model.Aggregates;
 
 namespace CertiWeb.SystemTests.Certifications.REST;
 
@@ -260,7 +260,7 @@ public class CarsControllerSystemTests : SystemTestBase
     /// <summary>
     /// Helper method to convert command to resource.
     /// </summary>
-    private static CreateCarResource CreateCarResourceFromCommand(CertiWeb.API.Certifications.Domain.Model.Commands.CreateCarCommand command)
+    private static CreateCarResource CreateCarResourceFromCommand(CertiWeb.API.Vehicles.Domain.Model.Commands.CreateCarCommand command)
     {
         return new CreateCarResource(
             command.Title,

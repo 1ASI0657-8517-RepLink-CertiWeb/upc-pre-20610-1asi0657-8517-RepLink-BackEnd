@@ -1,9 +1,9 @@
-using CertiWeb.API.Certifications.Domain.Model.Aggregates;
-using CertiWeb.API.Certifications.Domain.Model.Commands;
-using CertiWeb.API.Certifications.Domain.Model.Queries;
-using CertiWeb.API.Certifications.Domain.Services;
-using CertiWeb.API.Certifications.Interfaces.REST;
-using CertiWeb.API.Certifications.Interfaces.REST.Resources;
+using CertiWeb.API.Vehicles.Domain.Model.Aggregates;
+using CertiWeb.API.Vehicles.Domain.Model.Commands;
+using CertiWeb.API.Vehicles.Domain.Model.Queries;
+using CertiWeb.API.Vehicles.Domain.Services;
+using CertiWeb.API.Vehicles.Interfaces.REST;
+using CertiWeb.API.Vehicles.Interfaces.REST.Resources;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

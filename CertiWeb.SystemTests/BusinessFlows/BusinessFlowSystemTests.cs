@@ -93,8 +93,8 @@ public class BusinessFlowSystemTests : SystemTestBase
         // Arrange - Business Flow: User searching for cars
         
         // Step 1: Create test data - multiple brands and cars
-        var toyotaBrand = new CertiWeb.API.Certifications.Domain.Model.Aggregates.Brand("Toyota Flow Test");
-        var hondaBrand = new CertiWeb.API.Certifications.Domain.Model.Aggregates.Brand("Honda Flow Test");
+        var toyotaBrand = new CertiWeb.API.Vehicles.Domain.Model.Aggregates.Brand("Toyota Flow Test");
+        var hondaBrand = new CertiWeb.API.Vehicles.Domain.Model.Aggregates.Brand("Honda Flow Test");
 
         using (var context = GetFreshDbContext())
         {
@@ -204,7 +204,7 @@ public class BusinessFlowSystemTests : SystemTestBase
     {
         // Arrange - Business Flow: Car certification with validation errors and recovery
         
-        var testBrand = new CertiWeb.API.Certifications.Domain.Model.Aggregates.Brand("Validation Flow Brand");
+        var testBrand = new CertiWeb.API.Vehicles.Domain.Model.Aggregates.Brand("Validation Flow Brand");
         using (var context = GetFreshDbContext())
         {
             context.Brands.Add(testBrand);
@@ -272,7 +272,7 @@ public class BusinessFlowSystemTests : SystemTestBase
     {
         // Arrange - Business Flow: Multiple users registering cars simultaneously
         
-        var testBrand = new CertiWeb.API.Certifications.Domain.Model.Aggregates.Brand("Concurrent Flow Brand");
+        var testBrand = new CertiWeb.API.Vehicles.Domain.Model.Aggregates.Brand("Concurrent Flow Brand");
         using (var context = GetFreshDbContext())
         {
             context.Brands.Add(testBrand);

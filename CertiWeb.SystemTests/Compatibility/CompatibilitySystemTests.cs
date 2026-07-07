@@ -11,7 +11,7 @@ public class CompatibilitySystemTests : SystemTestBase
     public async Task ApiEndpoints_ShouldHandleInternationalCharacters()
     {
         // Arrange - Test with various international characters
-        var testBrand = new CertiWeb.API.Certifications.Domain.Model.Aggregates.Brand("Compatibility Test Brand");
+        var testBrand = new CertiWeb.API.Vehicles.Domain.Model.Aggregates.Brand("Compatibility Test Brand");
         using (var context = GetFreshDbContext())
         {
             context.Brands.Add(testBrand);
@@ -89,7 +89,7 @@ public class CompatibilitySystemTests : SystemTestBase
     public async Task ApiEndpoints_ShouldHandleDifferentEncodingsCorrectly()
     {
         // Arrange - Test with different character encodings
-        var testBrand = new CertiWeb.API.Certifications.Domain.Model.Aggregates.Brand("Encoding Test Brand");
+        var testBrand = new CertiWeb.API.Vehicles.Domain.Model.Aggregates.Brand("Encoding Test Brand");
         using (var context = GetFreshDbContext())
         {
             context.Brands.Add(testBrand);
@@ -139,7 +139,7 @@ public class CompatibilitySystemTests : SystemTestBase
     public async Task ApiEndpoints_ShouldHandleVariousNumberFormats()
     {
         // Arrange - Test with different number formats
-        var testBrand = new CertiWeb.API.Certifications.Domain.Model.Aggregates.Brand("Number Format Test Brand");
+        var testBrand = new CertiWeb.API.Vehicles.Domain.Model.Aggregates.Brand("Number Format Test Brand");
         using (var context = GetFreshDbContext())
         {
             context.Brands.Add(testBrand);
@@ -285,7 +285,7 @@ public class CompatibilitySystemTests : SystemTestBase
     public async Task ApiEndpoints_ShouldHandleLargePayloads()
     {
         // Arrange - Test with reasonably large payloads
-        var testBrand = new CertiWeb.API.Certifications.Domain.Model.Aggregates.Brand("Large Payload Test Brand");
+        var testBrand = new CertiWeb.API.Vehicles.Domain.Model.Aggregates.Brand("Large Payload Test Brand");
         using (var context = GetFreshDbContext())
         {
             context.Brands.Add(testBrand);
@@ -332,7 +332,7 @@ public class CompatibilitySystemTests : SystemTestBase
     public async Task ApiEndpoints_ShouldHandleEmptyAndNullValues()
     {
         // Arrange - Test with null and empty values
-        var testBrand = new CertiWeb.API.Certifications.Domain.Model.Aggregates.Brand("Null Test Brand");
+        var testBrand = new CertiWeb.API.Vehicles.Domain.Model.Aggregates.Brand("Null Test Brand");
         using (var context = GetFreshDbContext())
         {
             context.Brands.Add(testBrand);

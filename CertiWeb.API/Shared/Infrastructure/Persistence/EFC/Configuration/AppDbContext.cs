@@ -2,8 +2,8 @@ using CertiWeb.API.Shared.Infrastructure.Persistence.EFC.Configuration.Extension
 using EntityFrameworkCore.CreatedUpdatedDate.Extensions;
 using Microsoft.EntityFrameworkCore;
 using CertiWeb.API.Users.Domain.Model.Aggregates;
-using CertiWeb.API.Certifications.Domain.Model.Aggregates;
-using CertiWeb.API.Certifications.Infrastructure;
+using CertiWeb.API.Vehicles.Domain.Model.Aggregates;
+using CertiWeb.API.Vehicles.Infrastructure;
 using CertiWeb.API.IAM.Domain.Model.Aggregates;
 using CertiWeb.API.IAM.Infrastructure.Persistence.EFC.Seeders;
 
@@ -100,7 +100,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             entity.ToTable("reservations");
         });
         
-        // Certifications Context - Brand Configuration
+        // Vehicles Context - Brand Configuration
         builder.Entity<Brand>(entity =>
         {
             entity.HasKey(b => b.Id);
@@ -111,7 +111,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             entity.ToTable("brands");
         });
         
-        // Certifications Context - Car Configuration
+        // Vehicles Context - Car Configuration
         builder.Entity<Car>(entity =>
         {
             entity.HasKey(c => c.Id);
@@ -128,14 +128,14 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             entity.Property(c => c.Year)
                 .HasConversion(
                     year => year.Value,
-                    value => new CertiWeb.API.Certifications.Domain.Model.ValueObjects.Year(value)
+                    value => new CertiWeb.API.Vehicles.Domain.Model.ValueObjects.Year(value)
                 )
                 .IsRequired();
                 
             entity.Property(c => c.Price)
                 .HasConversion(
                     price => price.Value,
-                    value => new CertiWeb.API.Certifications.Domain.Model.ValueObjects.Price(value, "SOL")
+                    value => new CertiWeb.API.Vehicles.Domain.Model.ValueObjects.Price(value, "SOL")
                 )
                 .HasPrecision(18, 2)
                 .IsRequired();
@@ -143,7 +143,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             entity.Property(c => c.LicensePlate)
                 .HasConversion(
                     plate => plate.Value,
-                    value => new CertiWeb.API.Certifications.Domain.Model.ValueObjects.LicensePlate(value)
+                    value => new CertiWeb.API.Vehicles.Domain.Model.ValueObjects.LicensePlate(value)
                 )
                 .HasMaxLength(10)
                 .IsRequired();
@@ -151,7 +151,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             entity.Property(c => c.PdfCertification)
                 .HasConversion(
                     pdf => pdf.Base64Data,
-                    value => new CertiWeb.API.Certifications.Domain.Model.ValueObjects.PdfCertification(value)
+                    value => new CertiWeb.API.Vehicles.Domain.Model.ValueObjects.PdfCertification(value)
                 )
                 .HasColumnType("LONGTEXT")
                 .IsUnicode(false)

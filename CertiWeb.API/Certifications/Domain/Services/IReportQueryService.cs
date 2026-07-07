@@ -1,5 +1,5 @@
-﻿using CertiWeb.API.Certifications.Domain.Model.Aggregates;
-using CertiWeb.API.Certifications.Domain.Model.Queries;
+﻿using CertiWeb.API.Vehicles.Domain.Model.Aggregates;
+using CertiWeb.API.Vehicles.Domain.Model.Queries;
 namespace CertiWeb.API.Certifications.Domain.Services;
 /// <summary>
 /// Servicio de dominio especializado en la lógica de negocio para recuperar informes técnicos.

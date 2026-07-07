@@ -12,11 +12,11 @@ using CertiWeb.API.Reservation.Application.Internal.QueryServices;
 using CertiWeb.API.Reservation.Domain.Repositories;
 using CertiWeb.API.Reservation.Domain.Services;
 using CertiWeb.API.Reservation.Infrastructure.Persistence.EFC.Repositories;
-using CertiWeb.API.Certifications.Application.Internal.CommandServices;
-using CertiWeb.API.Certifications.Application.Internal.QueryServices;
-using CertiWeb.API.Certifications.Domain.Repositories;
-using CertiWeb.API.Certifications.Domain.Services;
-using CertiWeb.API.Certifications.Infrastructure.Persistence.EFC.Repositories;
+using CertiWeb.API.Vehicles.Application.Internal.CommandServices;
+using CertiWeb.API.Vehicles.Application.Internal.QueryServices;
+using CertiWeb.API.Vehicles.Domain.Repositories;
+using CertiWeb.API.Vehicles.Domain.Services;
+using CertiWeb.API.Vehicles.Infrastructure.Persistence.EFC.Repositories;
 using CertiWeb.API.IAM.Application.ACL;
 using CertiWeb.API.IAM.Application.Internal.QueryServices;
 using CertiWeb.API.IAM.Domain.Repositories;
@@ -47,8 +47,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 // Add CORS Policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllPolicy",
-        policy => policy.AllowAnyOrigin()
+    options.AddPolicy("AllowFrontendPolicy",
+        policy => policy.WithOrigins(
+                "https://project-kzvht.vercel.app",
+                "http://localhost:5173")
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
@@ -131,7 +133,7 @@ builder.Services.AddScoped<IUserQueryService, UserQueryServiceImpl>();
 builder.Services.AddScoped<IHashingService, HashingService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
-// Certifications Bounded Context Dependency Injection Configuration (must be before Reservation)
+// Vehicles Bounded Context Dependency Injection Configuration (must be before Reservation)
 builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<ICarCommandService, CarCommandServiceImpl>();
@@ -161,6 +163,9 @@ builder.Services.AddScoped<IUsersContextFacade, UsersContextFacade>();
 builder.Services.AddSingleton<CertiWeb.API.Shared.Infrastructure.Messaging.RabbitMQProducer>();
 builder.Services.AddHostedService<CertiWeb.API.Shared.Infrastructure.Messaging.CertificateConsumerService>();
 
+// Health checks (used by nginx upstream health probing in front of the api/api2 replicas)
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 
 // Verify if the database exists and create it if it doesn't
@@ -184,7 +189,7 @@ app.UseSwaggerUI();
 
 
 // Apply CORS Policy
-app.UseCors("AllowAllPolicy");
+app.UseCors("AllowFrontendPolicy");
 
 // In testing environment ensure certain response headers exist (Date, etc.)
 if (app.Environment.IsEnvironment("Testing"))
@@ -233,5 +238,10 @@ if (app.Environment.IsProduction())
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Exempt /health from the custom RequestAuthorizationMiddleware so load balancers/orchestrators
+// can probe it without a bearer token.
+app.MapHealthChecks("/health")
+    .WithMetadata(new CertiWeb.API.Users.Infrastructure.Pipeline.Middleware.Attributes.AllowAnonymousAttribute());
 
 app.Run();

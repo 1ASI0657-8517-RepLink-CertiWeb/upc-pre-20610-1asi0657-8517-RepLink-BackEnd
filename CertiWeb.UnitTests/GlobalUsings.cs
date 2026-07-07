@@ -5,4 +5,4 @@ global using System;
 global using System.Collections.Generic;
 global using System.Linq;
 global using System.Threading.Tasks;
-global using CertiWeb.API.Certifications.Domain.Services;
+global using CertiWeb.API.Vehicles.Domain.Services;

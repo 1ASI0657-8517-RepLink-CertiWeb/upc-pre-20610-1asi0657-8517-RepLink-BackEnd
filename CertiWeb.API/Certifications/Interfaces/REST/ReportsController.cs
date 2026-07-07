@@ -1,8 +1,8 @@
 ﻿using System.Net.Mime;
 using System.Security.Claims;
-using CertiWeb.API.Certifications.Domain.Model.Queries;
+using CertiWeb.API.Vehicles.Domain.Model.Queries;
 using CertiWeb.API.Certifications.Interfaces.REST.Resources;
-using CertiWeb.API.Certifications.Domain.Services;
+using CertiWeb.API.Vehicles.Domain.Services;
 using CertiWeb.API.Shared.Infrastructure.Storage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

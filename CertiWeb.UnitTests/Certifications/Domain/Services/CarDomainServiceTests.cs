@@ -1,7 +1,7 @@
-using CertiWeb.API.Certifications.Domain.Model.Aggregates;
-using CertiWeb.API.Certifications.Domain.Model.ValueObjects;
-using CertiWeb.API.Certifications.Domain.Services;
-using CertiWeb.API.Certifications.Domain.Repositories;
+using CertiWeb.API.Vehicles.Domain.Model.Aggregates;
+using CertiWeb.API.Vehicles.Domain.Model.ValueObjects;
+using CertiWeb.API.Vehicles.Domain.Services;
+using CertiWeb.API.Vehicles.Domain.Repositories;
 using Moq;
 using NUnit.Framework;
 using System.Threading.Tasks;
@@ -28,7 +28,7 @@ public class CarDomainServiceTests
     {
         // Arrange
         var licensePlate = new LicensePlate("ABC-123");
-        var createCmd = new CertiWeb.API.Certifications.Domain.Model.Commands.CreateCarCommand(
+        var createCmd = new CertiWeb.API.Vehicles.Domain.Model.Commands.CreateCarCommand(
             Title: "Test Model",
             Owner: "Test Owner",
             OwnerEmail: "owner@example.com",

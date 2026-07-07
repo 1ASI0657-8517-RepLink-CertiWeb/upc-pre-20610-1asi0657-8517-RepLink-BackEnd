@@ -1,7 +1,7 @@
-using CertiWeb.API.Certifications.Interfaces.REST.Resources;
-using CertiWeb.API.Certifications.Interfaces.REST.Transform;
-using CertiWeb.API.Certifications.Domain.Model.Aggregates;
-using CertiWeb.API.Certifications.Domain.Model.ValueObjects;
+using CertiWeb.API.Vehicles.Interfaces.REST.Resources;
+using CertiWeb.API.Vehicles.Interfaces.REST.Transform;
+using CertiWeb.API.Vehicles.Domain.Model.Aggregates;
+using CertiWeb.API.Vehicles.Domain.Model.ValueObjects;
 using NUnit.Framework;
 using System;
 using System.Reflection;
@@ -250,7 +250,7 @@ public class CarResourceTransformTests
     public void CarResource_WithMinimumValidValues_ShouldMapCorrectly()
     {
         // Arrange
-        var cmdMin = new CertiWeb.API.Certifications.Domain.Model.Commands.CreateCarCommand(
+        var cmdMin = new CertiWeb.API.Vehicles.Domain.Model.Commands.CreateCarCommand(
             Title: "A",
             Owner: "Test Owner",
             OwnerEmail: "owner@example.com",
@@ -284,7 +284,7 @@ public class CarResourceTransformTests
     {
         // Arrange
         var longModel = new string('A', 100); // Assuming max length is 100
-        var cmdMax = new CertiWeb.API.Certifications.Domain.Model.Commands.CreateCarCommand(
+        var cmdMax = new CertiWeb.API.Vehicles.Domain.Model.Commands.CreateCarCommand(
             Title: longModel,
             Owner: "Test Owner",
             OwnerEmail: "owner@example.com",
@@ -318,7 +318,7 @@ public class CarResourceTransformTests
     {
         // Arrange
         var specialModel = "Test Model with ñ, é, ü";
-        var cmdSpecial = new CertiWeb.API.Certifications.Domain.Model.Commands.CreateCarCommand(
+        var cmdSpecial = new CertiWeb.API.Vehicles.Domain.Model.Commands.CreateCarCommand(
             Title: specialModel,
             Owner: "Test Owner",
             OwnerEmail: "owner@example.com",
@@ -350,7 +350,7 @@ public class CarResourceTransformTests
 
     private static Car CreateTestCar(int id = 1, PdfCertification? pdfCertification = null)
     {
-        var cmd = new CertiWeb.API.Certifications.Domain.Model.Commands.CreateCarCommand(
+        var cmd = new CertiWeb.API.Vehicles.Domain.Model.Commands.CreateCarCommand(
             Title: $"Test Title {id}",
             Owner: "Test Owner",
             OwnerEmail: "owner@example.com",
@@ -472,7 +472,7 @@ public class UpdateCarResource : System.ComponentModel.DataAnnotations.IValidata
         {
             try
             {
-                _ = new CertiWeb.API.Certifications.Domain.Model.ValueObjects.LicensePlate(LicensePlate);
+                _ = new CertiWeb.API.Vehicles.Domain.Model.ValueObjects.LicensePlate(LicensePlate);
             }
             catch (ArgumentException)
             {

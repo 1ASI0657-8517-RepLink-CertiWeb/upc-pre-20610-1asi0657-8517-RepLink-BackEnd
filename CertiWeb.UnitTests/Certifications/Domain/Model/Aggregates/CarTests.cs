@@ -1,6 +1,6 @@
-using CertiWeb.API.Certifications.Domain.Model.Aggregates;
-using CertiWeb.API.Certifications.Domain.Model.Commands;
-using CertiWeb.API.Certifications.Domain.Model.ValueObjects;
+using CertiWeb.API.Vehicles.Domain.Model.Aggregates;
+using CertiWeb.API.Vehicles.Domain.Model.Commands;
+using CertiWeb.API.Vehicles.Domain.Model.ValueObjects;
 using FluentAssertions;
 using NUnit.Framework;
 

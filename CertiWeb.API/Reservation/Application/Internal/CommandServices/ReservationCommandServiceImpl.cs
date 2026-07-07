@@ -3,8 +3,8 @@ using CertiWeb.API.Reservation.Domain.Model.Commands;
 using CertiWeb.API.Reservation.Domain.Repositories;
 using CertiWeb.API.Reservation.Domain.Services;
 using CertiWeb.API.Shared.Domain.Repositories;
-using CertiWeb.API.Certifications.Domain.Services;
-using CertiWeb.API.Certifications.Domain.Model.Commands;
+using CertiWeb.API.Vehicles.Domain.Services;
+using CertiWeb.API.Vehicles.Domain.Model.Commands;
 using ReservationEntity = CertiWeb.API.Reservation.Domain.Model.Aggregates.Reservation;
 
 namespace CertiWeb.API.Reservation.Application.Internal.CommandServices;

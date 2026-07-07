@@ -1,4 +1,4 @@
-using CertiWeb.API.Certifications.Domain.Model.Aggregates;
+using CertiWeb.API.Vehicles.Domain.Model.Aggregates;
 using CertiWeb.IntegrationTests.Shared.Infrastructure;
 
 namespace CertiWeb.IntegrationTests.Certifications.Domain.Model.Aggregates;

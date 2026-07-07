@@ -87,7 +87,7 @@ public class ResilienceSystemTests : SystemTestBase
     public async Task ResourceExhaustion_ShouldHandleLargeDataSets()
     {
         // Arrange
-        var testBrand = new CertiWeb.API.Certifications.Domain.Model.Aggregates.Brand("Resilience Test Brand");
+        var testBrand = new CertiWeb.API.Vehicles.Domain.Model.Aggregates.Brand("Resilience Test Brand");
         using (var context = GetFreshDbContext())
         {
             context.Brands.Add(testBrand);
@@ -184,7 +184,7 @@ public class ResilienceSystemTests : SystemTestBase
     public async Task ConcurrentModification_ShouldHandleRaceConditions()
     {
         // Arrange
-        var testBrand = new CertiWeb.API.Certifications.Domain.Model.Aggregates.Brand("Concurrent Test Brand");
+        var testBrand = new CertiWeb.API.Vehicles.Domain.Model.Aggregates.Brand("Concurrent Test Brand");
         using (var context = GetFreshDbContext())
         {
             context.Brands.Add(testBrand);

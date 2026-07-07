@@ -14,7 +14,7 @@ public class DataValidationSystemTests : SystemTestBase
         await base.SetUp();
         
         // Arrange - Create test brand
-        var testBrand = new CertiWeb.API.Certifications.Domain.Model.Aggregates.Brand("Validation Test Brand");
+        var testBrand = new CertiWeb.API.Vehicles.Domain.Model.Aggregates.Brand("Validation Test Brand");
         using var context = GetFreshDbContext();
         context.Brands.Add(testBrand);
         await context.SaveChangesAsync();

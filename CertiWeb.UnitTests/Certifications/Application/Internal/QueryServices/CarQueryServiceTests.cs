@@ -1,8 +1,8 @@
-using CertiWeb.API.Certifications.Application.Internal.QueryServices;
-using CertiWeb.API.Certifications.Domain.Model.Aggregates;
-using CertiWeb.API.Certifications.Domain.Model.Queries;
-using CertiWeb.API.Certifications.Domain.Model.ValueObjects;
-using CertiWeb.API.Certifications.Domain.Repositories;
+using CertiWeb.API.Vehicles.Application.Internal.QueryServices;
+using CertiWeb.API.Vehicles.Domain.Model.Aggregates;
+using CertiWeb.API.Vehicles.Domain.Model.Queries;
+using CertiWeb.API.Vehicles.Domain.Model.ValueObjects;
+using CertiWeb.API.Vehicles.Domain.Repositories;
 using Moq;
 using NUnit.Framework;
 using System.Threading.Tasks;
@@ -301,7 +301,7 @@ public class CarQueryServiceTests
     private static Car CreateTestCar(int id, string model = "Test Model", int year = 2020, 
         decimal price = 25000, string licensePlate = null, int brandId = 1)
     {
-        var cmd = new CertiWeb.API.Certifications.Domain.Model.Commands.CreateCarCommand(
+        var cmd = new CertiWeb.API.Vehicles.Domain.Model.Commands.CreateCarCommand(
             Title: $"Test Title {id}",
             Owner: "Test Owner",
             OwnerEmail: "owner@example.com",

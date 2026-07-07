@@ -29,7 +29,7 @@ public class PerformanceSystemTests : SystemTestBase
     public async Task GetAllCars_WithLargeDataset_ShouldHandleLoad()
     {
         // Arrange - Create test brand
-        var testBrand = new CertiWeb.API.Certifications.Domain.Model.Aggregates.Brand("Performance Test Brand");
+        var testBrand = new CertiWeb.API.Vehicles.Domain.Model.Aggregates.Brand("Performance Test Brand");
         using (var context = GetFreshDbContext())
         {
             context.Brands.Add(testBrand);

@@ -82,7 +82,7 @@ public abstract class SystemTestBase : IDisposable
 
                 // Insert brands (IDs 1..13)
                 sb.AppendLine("DELETE FROM brands;");
-                var brands = CertiWeb.API.Certifications.Infrastructure.BrandSeeder.GetPredefinedBrands();
+                var brands = CertiWeb.API.Vehicles.Infrastructure.BrandSeeder.GetPredefinedBrands();
                 foreach (var b in brands)
                 {
                     // Use parameters to avoid SQL injection and respect values

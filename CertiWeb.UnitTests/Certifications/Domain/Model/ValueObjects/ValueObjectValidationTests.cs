@@ -1,4 +1,4 @@
-using CertiWeb.API.Certifications.Domain.Model.ValueObjects;
+using CertiWeb.API.Vehicles.Domain.Model.ValueObjects;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,5 @@
 using CertiWeb.SystemTests.Infrastructure;
-using CertiWeb.API.Certifications.Domain.Model.Aggregates;
+using CertiWeb.API.Vehicles.Domain.Model.Aggregates;
 
 namespace CertiWeb.SystemTests.Certifications.REST;
 
