@@ -55,6 +55,19 @@ public class RequestAuthorizationMiddleware(RequestDelegate next) {
         // Try to resolve an optional test provider first (registered only in system tests).
         var testProvider = context.RequestServices.GetService(typeof(CertiWeb.API.Users.Infrastructure.Pipeline.Middleware.ITestUserProvider)) as CertiWeb.API.Users.Infrastructure.Pipeline.Middleware.ITestUserProvider;
 
+        // Resolve the role/plan claim carried by the token (if any) so downstream authorization
+        // filters (e.g. [AuthorizeAdmin]) can check it without re-parsing the token themselves.
+        string? role = null;
+        try
+        {
+            role = await tokenService.GetRoleFromToken(token);
+        }
+        catch
+        {
+            role = null;
+        }
+        context.Items["UserRole"] = role;
+
         try
         {
             // validate token

@@ -34,6 +34,17 @@ using CertiWeb.API.Shared.Infrastructure.Storage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using CertiWeb.API.Shared.Infrastructure.BackgroundTasks;
+using CertiWeb.API.Security.Domain.Repositories;
+using CertiWeb.API.Security.Domain.Services;
+using CertiWeb.API.Security.Application.Internal.CommandServices;
+using CertiWeb.API.Security.Application.Internal.QueryServices;
+using CertiWeb.API.Security.Infrastructure.Persistence.EFC.Repositories;
+using CertiWeb.API.Security.Infrastructure.Pipeline.Middleware.Extensions;
+using CertiWeb.API.Inspections.Domain.Repositories;
+using CertiWeb.API.Inspections.Domain.Services;
+using CertiWeb.API.Inspections.Application.Internal.CommandServices;
+using CertiWeb.API.Inspections.Application.Internal.QueryServices;
+using CertiWeb.API.Inspections.Infrastructure.Persistence.EFC.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -163,6 +174,16 @@ builder.Services.AddScoped<IUsersContextFacade, UsersContextFacade>();
 builder.Services.AddSingleton<CertiWeb.API.Shared.Infrastructure.Messaging.RabbitMQProducer>();
 builder.Services.AddHostedService<CertiWeb.API.Shared.Infrastructure.Messaging.CertificateConsumerService>();
 
+// Security Bounded Context Dependency Injection Configuration (AC-01 audit logging)
+builder.Services.AddScoped<ISecurityAuditLogRepository, SecurityAuditLogRepository>();
+builder.Services.AddScoped<ISecurityAuditLogCommandService, SecurityAuditLogCommandServiceImpl>();
+builder.Services.AddScoped<ISecurityAuditLogQueryService, SecurityAuditLogQueryServiceImpl>();
+
+// Inspections Bounded Context Dependency Injection Configuration (AC-03 async processing evidence)
+builder.Services.AddScoped<IProcessedInspectionEventRepository, ProcessedInspectionEventRepository>();
+builder.Services.AddScoped<IProcessedInspectionEventCommandService, ProcessedInspectionEventCommandServiceImpl>();
+builder.Services.AddScoped<IProcessedInspectionEventQueryService, ProcessedInspectionEventQueryServiceImpl>();
+
 // Health checks (used by nginx upstream health probing in front of the api/api2 replicas)
 builder.Services.AddHealthChecks();
 
@@ -176,6 +197,56 @@ using (var scope = app.Services.CreateScope())
         var services = scope.ServiceProvider;
         var context = services.GetRequiredService<AppDbContext>();
         context.Database.EnsureCreated();
+
+        // EnsureCreated() only builds the schema for a brand-new database - it never alters an
+        // existing one. For pre-existing local/deployed MySQL volumes created before the
+        // SecurityAuditLog table was added, create just that table idempotently so the
+        // AC-01 audit log works without wiping the volume or losing seeded data.
+        if (!app.Environment.IsEnvironment("Testing"))
+        {
+            try
+            {
+                await context.Database.ExecuteSqlRawAsync(@"
+                    CREATE TABLE IF NOT EXISTS security_audit_logs (
+                        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                        `timestamp` DATETIME(6) NOT NULL,
+                        ip_address VARCHAR(45) NULL,
+                        endpoint VARCHAR(500) NOT NULL,
+                        http_method VARCHAR(10) NOT NULL,
+                        status_code INT NOT NULL,
+                        user_id INT NULL
+                    ) CHARACTER SET utf8mb4;");
+            }
+            catch (Exception ex)
+            {
+                app.Logger.LogWarning($"security_audit_logs table check/creation failed: {ex.Message}");
+            }
+
+            // Same idempotent approach for the processed_inspection_events table (AC-03 async
+            // processing evidence), added after some volumes already existed.
+            try
+            {
+                await context.Database.ExecuteSqlRawAsync(@"
+                    CREATE TABLE IF NOT EXISTS processed_inspection_events (
+                        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                        received_at DATETIME(6) NOT NULL,
+                        raw_message TEXT NOT NULL,
+                        status VARCHAR(20) NOT NULL
+                    ) CHARACTER SET utf8mb4;");
+            }
+            catch (Exception ex)
+            {
+                app.Logger.LogWarning($"processed_inspection_events table check/creation failed: {ex.Message}");
+            }
+        }
+
+        // Dev-only fake data (Bogus): never runs outside Development, and only touches
+        // empty tables so it's safe to leave the database running between restarts.
+        if (app.Environment.IsDevelopment())
+        {
+            var hashingService = services.GetRequiredService<IHashingService>();
+            await CertiWeb.API.Shared.Infrastructure.DevDataSeeder.SeedAsync(context, hashingService);
+        }
     }
     catch (Exception ex)
     {
@@ -222,6 +293,11 @@ if (app.Environment.IsEnvironment("Testing"))
         await next();
     });
 }
+
+// Wraps the whole downstream pipeline so it can observe the final status code of every
+// request (including the 401s short-circuited by UseRequestAuthorization below) without
+// adding latency to the response itself - the DB write is queued to run in the background.
+app.UseSecurityAuditLogging();
 
 // Enable endpoint routing so middlewares can read endpoint metadata (AllowAnonymous etc.)
 app.UseRouting();

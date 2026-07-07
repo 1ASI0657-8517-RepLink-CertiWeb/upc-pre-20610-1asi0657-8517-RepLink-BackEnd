@@ -47,7 +47,8 @@ public class TokenService(IOptions<TokenSettings> tokenSettings) : ITokenService
             {
                 new Claim(ClaimTypes.Sid, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.name),
-                new Claim(ClaimTypes.Email, user.email)
+                new Claim(ClaimTypes.Email, user.email),
+                new Claim(ClaimTypes.Role, user.plan)
             }),
             Expires = DateTime.UtcNow.AddDays(7),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -89,7 +90,42 @@ public class TokenService(IOptions<TokenSettings> tokenSettings) : ITokenService
             return userId;
         }
         catch (Exception e){
-            
+
+            Console.WriteLine(e);
+            return null;
+        }
+    }
+
+    /**
+     * <summary>
+     *     Extracts the role/plan claim from a token
+     * </summary>
+     * <param name="token">The token to inspect</param>
+     * <returns>The role claim value if present and the token is valid, null otherwise</returns>
+     */
+    public async Task<string?> GetRoleFromToken(string token)
+    {
+        if (string.IsNullOrEmpty(token))
+            return null;
+
+        var tokenHandler = new JsonWebTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_tokenSettings.Secret);
+        try
+        {
+            var tokenValidationResult = await tokenHandler.ValidateTokenAsync(token, new TokenValidationParameters{
+
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero
+            });
+
+            var jwtToken = (JsonWebToken)tokenValidationResult.SecurityToken;
+            return jwtToken.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Role)?.Value;
+        }
+        catch (Exception e)
+        {
             Console.WriteLine(e);
             return null;
         }

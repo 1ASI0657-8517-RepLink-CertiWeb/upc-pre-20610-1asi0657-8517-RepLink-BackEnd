@@ -37,6 +37,7 @@ services:
       rabbitmq:
         condition: service_started
     environment:
+      - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=certiweb;Uid=certiweb_user;Pwd=certiweb_password;
       - RabbitMQ__Host=rabbitmq
     networks:
@@ -52,6 +53,7 @@ services:
       rabbitmq:
         condition: service_started
     environment:
+      - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=certiweb;Uid=certiweb_user;Pwd=certiweb_password;
       - RabbitMQ__Host=rabbitmq
     networks:

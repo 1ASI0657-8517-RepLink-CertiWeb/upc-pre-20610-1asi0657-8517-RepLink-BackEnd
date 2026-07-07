@@ -25,7 +25,7 @@ public record CreateCarResource(
     int BrandId = 0,
     [MaxLength(100)] string? Model = null,
     [MaxLength(500)] string? Description = null,
-    [MaxLength(5000)] string? PdfCertification = null,
+    [MaxLength(14_000_000)] string? PdfCertification = null,
     [MaxLength(500)] string? ImageUrl = null,
     decimal Price = 0,
     [MaxLength(15)] string? LicensePlate = null,

@@ -9,6 +9,7 @@ using CertiWeb.API.Certifications.Interfaces.REST.Resources;
 using CertiWeb.API.Vehicles.Interfaces.REST.Transform;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using CertiWeb.API.Users.Infrastructure.Pipeline.Middleware.Attributes;
 
 namespace CertiWeb.API.Vehicles.Interfaces.REST;
 
@@ -111,11 +112,13 @@ public class CarsController(ICarCommandService carCommandService, ICarQueryServi
             Console.WriteLine($"!!! PRICE VALIDATION FAILED: Price '{resource.Price}' is negative.");
             return BadRequest(new { message = "Validation error", details = "Price must be non-negative" });
         }
-        // Disallow hyphens in license plates for REST API validation layer (system tests expect this behavior)
-        if (resource.LicensePlate != null && System.Text.RegularExpressions.Regex.IsMatch(resource.LicensePlate, ".*[-].*"))
+        // License plates with a hyphen must match the standard ABC-123 format (3 alphanumeric + hyphen + 3 alphanumeric),
+        // matching the frontend's reservation format. Any other hyphen usage is rejected.
+        if (resource.LicensePlate != null && resource.LicensePlate.Contains('-') &&
+            !System.Text.RegularExpressions.Regex.IsMatch(resource.LicensePlate, @"^[A-Za-z0-9]{3}-[A-Za-z0-9]{3}$"))
         {
-            Console.WriteLine($"!!! LICENSE PLATE VALIDATION FAILED: LicensePlate '{resource.LicensePlate}' contains a hyphen.");
-            return BadRequest(new { message = "Validation error", details = "License plate cannot contain hyphens or special characters" });
+            Console.WriteLine($"!!! LICENSE PLATE VALIDATION FAILED: LicensePlate '{resource.LicensePlate}' has an invalid hyphenated format.");
+            return BadRequest(new { message = "Validation error", details = "License plate with a hyphen must match the format ABC-123" });
         }
         // PdfCertification: must be provided and valid Base64. Reject empty or invalid values
         if (string.IsNullOrWhiteSpace(resource.PdfCertification))
@@ -282,6 +285,7 @@ public class CarsController(ICarCommandService carCommandService, ICarQueryServi
     /// <param name="resource">The car update data.</param>
     /// <returns>The updated car resource if successful, BadRequest if update fails.</returns>
     [HttpPatch("{carId:int}")]
+    [AuthorizeAdmin]
     public async Task<ActionResult<CarResource>> UpdateCar(int carId, [FromBody] UpdateCarResource resource)
     {
         // Validate basic properties for update
@@ -289,8 +293,9 @@ public class CarsController(ICarCommandService carCommandService, ICarQueryServi
             return BadRequest(new { message = "Validation error", details = "Year must be between 1900 and current year + 1" });
         if (resource.Price.HasValue && resource.Price.Value < 0)
             return BadRequest(new { message = "Validation error", details = "Price must be non-negative" });
-        if (!string.IsNullOrEmpty(resource.LicensePlate) && System.Text.RegularExpressions.Regex.IsMatch(resource.LicensePlate, ".*[-].*"))
-            return BadRequest(new { message = "Validation error", details = "License plate cannot contain hyphens or special characters" });
+        if (!string.IsNullOrEmpty(resource.LicensePlate) && resource.LicensePlate.Contains('-') &&
+            !System.Text.RegularExpressions.Regex.IsMatch(resource.LicensePlate, @"^[A-Za-z0-9]{3}-[A-Za-z0-9]{3}$"))
+            return BadRequest(new { message = "Validation error", details = "License plate with a hyphen must match the format ABC-123" });
         if (!string.IsNullOrWhiteSpace(resource.PdfCertification))
         {
             var tmp = new CertiWeb.API.Vehicles.Domain.Model.ValueObjects.PdfCertification(resource.PdfCertification);
@@ -375,6 +380,7 @@ public class CarsController(ICarCommandService carCommandService, ICarQueryServi
     /// <param name="carId">The ID of the car to delete.</param>
     /// <returns>NoContent if successful, NotFound if car doesn't exist.</returns>
     [HttpDelete("{carId:int}")]
+    [AuthorizeAdmin]
     [SwaggerOperation(
         Summary = "Deletes a car certification",
         Description = "Deletes a car certification from the system",

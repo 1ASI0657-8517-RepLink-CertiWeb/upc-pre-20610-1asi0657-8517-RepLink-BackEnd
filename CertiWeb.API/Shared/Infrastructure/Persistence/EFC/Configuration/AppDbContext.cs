@@ -6,6 +6,8 @@ using CertiWeb.API.Vehicles.Domain.Model.Aggregates;
 using CertiWeb.API.Vehicles.Infrastructure;
 using CertiWeb.API.IAM.Domain.Model.Aggregates;
 using CertiWeb.API.IAM.Infrastructure.Persistence.EFC.Seeders;
+using CertiWeb.API.Security.Domain.Model.Aggregates;
+using CertiWeb.API.Inspections.Domain.Model.Aggregates;
 
 namespace CertiWeb.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 
@@ -174,6 +176,37 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             entity.ToTable("cars");
         });
         
+        // Security Context - SecurityAuditLog Configuration (AC-01 unauthorized attempt logging)
+        builder.Entity<SecurityAuditLog>(entity =>
+        {
+            entity.HasKey(s => s.Id);
+            entity.Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
+            entity.Property(s => s.Timestamp).IsRequired();
+            entity.Property(s => s.IpAddress).HasMaxLength(45);
+            entity.Property(s => s.Endpoint).IsRequired().HasMaxLength(500);
+            entity.Property(s => s.HttpMethod).IsRequired().HasMaxLength(10);
+            entity.Property(s => s.StatusCode).IsRequired();
+            entity.Property(s => s.UserId).IsRequired(false);
+
+            entity.HasIndex(s => s.Timestamp);
+
+            entity.ToTable("security_audit_logs");
+        });
+
+        // Inspections Context - ProcessedInspectionEvent Configuration (AC-03 async processing evidence)
+        builder.Entity<ProcessedInspectionEvent>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).IsRequired().ValueGeneratedOnAdd();
+            entity.Property(e => e.ReceivedAt).IsRequired();
+            entity.Property(e => e.RawMessage).IsRequired().HasColumnType("TEXT");
+            entity.Property(e => e.Status).IsRequired().HasMaxLength(20);
+
+            entity.HasIndex(e => e.ReceivedAt);
+
+            entity.ToTable("processed_inspection_events");
+        });
+
         // Seed Brand Data
         builder.Entity<Brand>().HasData(BrandSeeder.GetPredefinedBrands());
         // Seed AdminUser Data
@@ -186,4 +219,6 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<AdminUser> AdminUsers { get; set; }
     public DbSet<Brand> Brands { get; set; }
     public DbSet<Car> Cars { get; set; }
+    public DbSet<SecurityAuditLog> SecurityAuditLogs { get; set; }
+    public DbSet<ProcessedInspectionEvent> ProcessedInspectionEvents { get; set; }
 }
