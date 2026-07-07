@@ -23,6 +23,19 @@ public class TestTokenService : ITokenService
         // Always return a fixed user id for tests
         return Task.FromResult<int?>(1);
     }
+
+    public Task<string?> GetRoleFromToken(string token)
+    {
+        if (string.IsNullOrWhiteSpace(token))
+            return Task.FromResult<string?>(null);
+
+        // Tests that need an admin-privileged token use a value containing "admin"
+        // (e.g. "Bearer admin-test-token"); everything else - including the default
+        // "test-token" auto-injected for requests without an Authorization header - is
+        // treated as a regular, non-admin authenticated user.
+        var role = token.Contains("admin", StringComparison.OrdinalIgnoreCase) ? "admin" : "free";
+        return Task.FromResult<string?>(role);
+    }
 }
 
 /// <summary>

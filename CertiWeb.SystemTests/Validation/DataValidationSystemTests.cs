@@ -192,7 +192,7 @@ public class DataValidationSystemTests : SystemTestBase
             "AB123",      // Too short (5 chars)
             "ABCDEFGH123", // Too long (11 chars)
             "",           // Empty
-            "ABC-123",    // With dash (might be invalid depending on validation rules)
+            "AB-1234",    // Hyphenated but not the standard ABC-123 (3+3) format
         };
 
         foreach (var invalidPlate in invalidLicensePlates)

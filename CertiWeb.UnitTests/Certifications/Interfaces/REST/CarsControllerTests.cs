@@ -132,7 +132,7 @@ public class CarsControllerTests
     }
 
     [Test]
-    public async Task UpdateCar_WithHyphenInLicensePlate_ShouldReturnBadRequest()
+    public async Task UpdateCar_WithMalformedHyphenInLicensePlate_ShouldReturnBadRequest()
     {
         // Arrange
         var carId = 1;
@@ -147,7 +147,7 @@ public class CarsControllerTests
             "dGVzdHBkZg==",
             null,
             25000,
-            "ABC-123" // Contains hyphen
+            "AB-1234" // Hyphen present but not the ABC-123 (3+3) format
         );
 
         // Act
@@ -156,6 +156,51 @@ public class CarsControllerTests
         // Assert
         result.Result.Should().BeOfType<BadRequestObjectResult>();
         _carCommandServiceMock.Verify(s => s.Handle(It.IsAny<UpdateCarCommand>()), Times.Never);
+    }
+
+    [Test]
+    public async Task UpdateCar_WithStandardAbc123LicensePlateFormat_ShouldPassValidationAndCallCommandService()
+    {
+        // Arrange: ABC-123 is the standard format produced by the reservation flow and the frontend form.
+        var carId = 1;
+        var updateResource = new UpdateCarResource(
+            "Title",
+            "Owner",
+            "email@test.com",
+            2020,
+            1,
+            "Model",
+            null,
+            "dGVzdHBkZmNvbnRlbnQ=",
+            null,
+            25000,
+            "IEY-871"
+        );
+
+        var updatedCar = new Car(new CreateCarCommand(
+            "Title",
+            "Owner",
+            "email@test.com",
+            2020,
+            1,
+            "Model",
+            null,
+            "dGVzdHBkZmNvbnRlbnQ=",
+            null,
+            25000,
+            "IEY-871",
+            100
+        ));
+
+        _carCommandServiceMock.Setup(s => s.Handle(It.IsAny<UpdateCarCommand>()))
+            .ReturnsAsync(updatedCar);
+
+        // Act
+        var result = await _controller.UpdateCar(carId, updateResource);
+
+        // Assert: reaches the command service instead of being rejected at the validation layer
+        result.Result.Should().BeOfType<OkObjectResult>();
+        _carCommandServiceMock.Verify(s => s.Handle(It.IsAny<UpdateCarCommand>()), Times.Once);
     }
 
     [Test]
