@@ -1,0 +1,131 @@
+# Deploy target: shared Ubuntu server (not dedicated - other company
+# services such as n8n, a VM and its own nginx already run there).
+# This file does NOT publish any ports to the host, so it cannot collide
+# with anything else on the server. External access is provided only via
+# the cloudflared tunnel below.
+#
+# Bring the stack up with:
+#   docker compose --env-file .env.server -f docker-compose.server.yml up -d
+#
+# Bring it down with:
+#   docker compose --env-file .env.server -f docker-compose.server.yml down
+#
+# docker-compose.yml (local dev) is untouched - this is a separate file.
+
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    mem_limit: 1g
+    cpus: 0.5
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: certiweb
+      MYSQL_USER: certiweb_user
+      MYSQL_PASSWORD: certiweb_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    expose:
+      - "3306"
+    networks:
+      - certiweb-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: unless-stopped
+    mem_limit: 512m
+    cpus: 0.3
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    expose:
+      - "5672"
+      - "15672"
+    networks:
+      - certiweb-network
+
+  api:
+    image: "certiweb-api:local"
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    mem_limit: 512m
+    cpus: 0.5
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=certiweb;Uid=certiweb_user;Pwd=certiweb_password;
+      - RabbitMQ__Host=rabbitmq
+    expose:
+      - "8080"
+    networks:
+      - certiweb-network
+
+  api2:
+    image: "certiweb-api:local"
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    mem_limit: 512m
+    cpus: 0.5
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=mysql;Port=3306;Database=certiweb;Uid=certiweb_user;Pwd=certiweb_password;
+      - RabbitMQ__Host=rabbitmq
+    expose:
+      - "8080"
+    networks:
+      - certiweb-network
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    mem_limit: 128m
+    cpus: 0.2
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api
+      - api2
+    expose:
+      - "80"
+    networks:
+      - certiweb-network
+
+  # Quick tunnel for connectivity validation only - no Cloudflare account/
+  # domain wired up yet. Each run prints a random trycloudflare.com URL in
+  # its logs (docker compose logs cloudflared). Internal target is nginx:80
+  # because nginx.conf listens on port 80, not 8080.
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    mem_limit: 128m
+    cpus: 0.2
+    command: tunnel --url http://nginx:80
+    depends_on:
+      - nginx
+    networks:
+      - certiweb-network
+
+volumes:
+  mysql_data:
+
+networks:
+  certiweb-network:
+    driver: bridge
