@@ -61,7 +61,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontendPolicy",
         policy => policy.WithOrigins(
                 "https://project-kzvht.vercel.app",
-                "http://localhost:5173")
+                "http://localhost:5173",
+                "https://aplicacion-web-ten.vercel.app",
+                "https://anniversary-edinburgh-pdt-fought.trycloudflare.com")
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
